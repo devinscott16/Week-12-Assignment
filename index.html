@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,23 +7,21 @@
     <link rel="styleshets" href="styles.css">
 </head>
 <body>
-    
-
-
-<!--DELETE LATER
-    DOWNLOADED THUNDER CLOUD
-    SET UP BOOTSTRAP
-    SET UP JQUERY
-    SET UP JS FILE
-    LINKED CSS
-    INSTALLED JSON SERVER
-    ~~~~STILL NEED TO LINK HTTP FOR JSON TO MY SCRIPT~~~~
-    -->
-
-
-
-
-
+    <div class="container mt-5">
+        <h1 class="text-center">Material List</h1>
+        <form class="input-group mb-3">
+            <input 
+            type="text"
+            id="new"
+            class="form-control"
+            placeholder="Add a new Material"
+            />
+            <button type="submit" class="btn btn-primary" id="add">Add</button>
+            <button type="submit" class="btn btn-success" id="purchased">Purchased</button>
+            <button type="submit" class="btn btn-danger" id="delete">Delete</button>
+        </form>
+        <ul class="list-group" id="materialList"></ul>
+    </div>
 
     <!--jquery-->
     <script
