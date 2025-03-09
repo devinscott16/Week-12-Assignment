@@ -1,17 +1,29 @@
 {
-    "materials": [
-
-      { "id": 1, 
-      "text": "Wood", 
-      "purchased": false },
-
-      { "id": 2, 
-      "text": "Nails", 
-      "purchased": false },
-
-      { "id": 3, 
-      "text": "Paint", 
-      "purchased": false }
-      
-    ]
-  }
+  "materials": [
+    {
+      "id": 1,
+      "text": "Wood",
+      "purchased": false
+    },
+    {
+      "id": 2,
+      "text": "Nails",
+      "purchased": false
+    },
+    {
+      "id": 3,
+      "text": "Paint",
+      "purchased": false
+    },
+    {
+      "id": "3f14",
+      "text": "Nails",
+      "Purchased": false
+    },
+    {
+      "id": "742b",
+      "text": "Nails",
+      "Purchased": false
+    }
+  ]
+}
