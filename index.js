@@ -1,73 +1,119 @@
 $(document).ready(function () {
-    const defaultMaterial = [
-        { text: "Wood", purchased: false },
-        { text: "Nails", purchased: false },
-        { text: "Paint", purchased: false },
-    ];
+  const API_URL = "http://localhost:3000/materials";
 
-    // Render Function
-    function render() {
-        $("#materialList").empty();
+  // Fetch materials from JSON Server
+  function fetchMaterials() {
+    $.get(API_URL, function (data) {
+      render(data);
+    }).fail(function () {
+      console.error("Failed to load materials.");
+    });
+  }
 
-        defaultMaterial.forEach(function (material, index) {
-            let materialItem = `<li class="list-group-item d-flex justify-content-between align-items-center">
-                <span class="material-text ${material.purchased ? "purchased" : ""}">${material.text}</span>
-                <div>
-                    <button class="btn btn-sm btn-secondary editMaterial" data-index="${index}">Edit</button>
-                    <button class="btn btn-sm btn-success toggleMaterial" data-index="${index}">${
-                        material.purchased ? "Buy" : "Purchased"
-                    }</button>
-                    <button class="btn btn-sm btn-danger deleteMaterial" data-index="${index}">Delete</button>
-                </div>
-            </li>`;
-            $("#materialList").append(materialItem);
-        });
-    }
-
-    // Add Materials
-    $("form").submit(function (event) {
-        event.preventDefault();
-        let materialText = $("#addMaterial").val().trim();
-        if (materialText !== "") {
-            let materialItem = `<li class="list-group-item d-flex justify-content-between align-items-center">
-                <span class="material-text">${materialText}</span>
+  // Render Function - Display materials
+  function render(materials) {
+    $("#materialList").empty();
+    materials.forEach(function (material) {
+      let materialItem = `<li class="list-group-item d-flex justify-content-between align-items-center" data-id="${
+        material.id
+      }">
+                <span class="material-text ${
+                  material.purchased ? "purchased" : ""
+                }">${material.text}</span>
                 <div>
                     <button class="btn btn-sm btn-secondary editMaterial">Edit</button>
-                    <button class="btn btn-sm btn-success toggleMaterial">Purchased</button>
+                    <button class="btn btn-sm btn-success toggleMaterial">${
+                      material.purchased ? "Buy" : "Purchased"
+                    }</button>
                     <button class="btn btn-sm btn-danger deleteMaterial">Delete</button>
                 </div>
             </li>`;
-            $("#materialList").append(materialItem);
-            $("#addMaterial").val("");
-        } else {
-            alert("Please enter a material");
-        }
+      $("#materialList").append(materialItem);
     });
+  }
 
-    // Event for "Purchased" Button
-    $("#materialList").on("click", ".toggleMaterial", function () {
-        let textElement = $(this).closest("li").find(".material-text");
-        textElement.toggleClass("purchased");
-        $(this).text(textElement.hasClass("purchased") ? "Buy" : "Purchased");
+  // Add Material to Server
+  $("form").submit(function (event) {
+    event.preventDefault();
+    let materialText = $("#addMaterial").val().trim();
+    if (materialText !== "") {
+      $.post(API_URL, { text: materialText, purchased: false })
+        .done(function () {
+          fetchMaterials();
+          $("#addMaterial").val("");
+        })
+        .fail(function () {
+          console.error("Failed to add material.");
+        });
+    } else {
+      alert("Please enter a material.");
+    }
+  });
+
+  // Toggle Buy/Purchased Status
+  $("#materialList").on("click", ".toggleMaterial", function () {
+    let listItem = $(this).closest("li");
+    let id = listItem.data("id");
+    let textElement = listItem.find(".material-text");
+    let purchased = !textElement.hasClass("purchased");
+
+    $.ajax({
+      url: `${API_URL}/${id}`,
+      method: "PUT",
+      contentType: "application/json",
+      data: JSON.stringify({ text: textElement.text(), purchased }),
+      success: function () {
+        fetchMaterials();
+      },
+      error: function () {
+        console.error("Failed to update material.");
+      },
     });
+  });
 
-    // Event for Delete Button
-    $("#materialList").on("click", ".deleteMaterial", function () {
-        $(this).closest("li").remove();
+  // Delete a Material
+  $("#materialList").on("click", ".deleteMaterial", function () {
+    let id = $(this).closest("li").data("id");
+
+    $.ajax({
+      url: `${API_URL}/${id}`,
+      method: "DELETE",
+      success: function () {
+        fetchMaterials();
+      },
+      error: function () {
+        console.error("Failed to delete material.");
+      },
     });
+  });
 
-    // Event for Edit Button
-    $("#materialList").on("click", ".editMaterial", function (event) {
-        event.preventDefault();
-        let materialTextElement = $(this).closest("li").find(".material-text"); 
-        let currentText = materialTextElement.text();
-        let newText = prompt("Edit your Material:", currentText); 
+  // Edit a Material
+  $("#materialList").on("click", ".editMaterial", function () {
+    let listItem = $(this).closest("li");
+    let id = listItem.data("id");
+    let textElement = listItem.find(".material-text");
+    let currentText = textElement.text();
+    let newText = prompt("Edit your material:", currentText);
 
-        if (newText !== null && newText.trim() !== "") {
-            materialTextElement.text(newText.trim());
-        }
-    });
+    if (newText !== null && newText.trim() !== "") {
+      $.ajax({
+        url: `${API_URL}/${id}`,
+        method: "PUT",
+        contentType: "application/json",
+        data: JSON.stringify({
+          text: newText.trim(),
+          purchased: textElement.hasClass("purchased"),
+        }),
+        success: function () {
+          fetchMaterials();
+        },
+        error: function () {
+          console.error("Failed to edit material.");
+        },
+      });
+    }
+  });
 
-    // Call render function
-    render();
+  // Load materials when the page loads
+  fetchMaterials();
 });

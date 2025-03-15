@@ -1,27 +1,17 @@
 {
   "materials": [
     {
-      "id": 1,
       "text": "Wood",
-      "purchased": false
+      "purchased": false,
+      "id": "2"
     },
     {
-      "id": 2,
-      "text": "Nails",
-      "purchased": false
-    },
-    {
-      "id": 3,
       "text": "Paint",
-      "purchased": false
+      "purchased": false,
+      "id": "3"
     },
     {
-      "id": "3f14",
-      "text": "Nails",
-      "Purchased": false
-    },
-    {
-      "id": "742b",
+      "id": "ded1",
       "text": "Nails",
       "Purchased": false
     }
